@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Admin Dashboard  Ravishing Soul</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+<link rel="stylesheet" href="css/styles.css"/>
+<style>
+.admin-wrap { max-width: 1300px; margin: 0 auto; padding: 6rem 1.5rem 4rem; }
+.admin-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 3rem; flex-wrap: gap; gap: 1rem; }
+.admin-title { font-family: var(--font-display); font-size: 2.2rem; }
+.admin-title span { color: var(--gold); }
+.admin-actions { display: flex; gap: 0.75rem; flex-wrap: wrap; }
+
+.stats-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 1rem; margin-bottom: 2.5rem; }
+.stat-card { background: var(--surface); border: 1px solid var(--border); padding: 1.5rem; }
+.stat-card-num { font-family: var(--font-display); font-size: 2.5rem; color: var(--gold); line-height: 1; }
+.stat-card-label { font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); margin-top: 0.4rem; }
+
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+thead { background: var(--bg2); }
+th { padding: 1rem 1.25rem; text-align: left; font-size: 0.62rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); font-weight: 500; white-space: nowrap; }
+td { padding: 0.9rem 1.25rem; border-top: 1px solid var(--border); vertical-align: top; }
+tr:hover td { background: var(--surface); }
+
+.id-code { font-family: monospace; font-size: 0.75rem; color: var(--gold); background: rgba(201,169,110,0.08); padding: 0.15rem 0.4rem; border-radius: 3px; }
+.badge { display: inline-block; font-size: 0.62rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.2rem 0.6rem; border-radius: 100px; }
+.badge-green { background: rgba(37,211,102,0.12); color: var(--green); border: 1px solid rgba(37,211,102,0.2); }
+.badge-dim { background: var(--surface); color: var(--text-dim); border: 1px solid var(--border); }
+.action-tag { display: inline-block; font-size: 0.6rem; background: rgba(201,169,110,0.08); border: 1px solid rgba(201,169,110,0.15); color: var(--gold); padding: 0.15rem 0.5rem; margin: 2px; border-radius: 2px; }
+.actions-cell { max-width: 260px; }
+.phone-val { font-family: monospace; font-size: 0.82rem; }
+
+.conv-bar { background: var(--surface); border: 1px solid var(--border); padding: 1.25rem 1.75rem; margin-bottom: 2rem; display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+.conv-label { font-size: 0.65rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--text-dim); }
+.conv-value { font-family: var(--font-display); font-size: 1.8rem; color: var(--gold); }
+
+.note { font-size: 0.75rem; color: var(--text-dim); line-height: 1.6; padding: 1rem; background: rgba(201,169,110,0.04); border: 1px solid rgba(201,169,110,0.1); margin-bottom: 2rem; }
+@media(max-width:600px){ .admin-header { flex-direction: column; align-items: flex-start; } }
+</style>
+</head>
+<body>
+
+<nav class="nav scrolled" id="mainNav">
+  <div class="nav-inner">
+    <div class="nav-logo">Ravishing <span>Soul</span></div>
+    <div class="nav-links">
+      <a href="index.html"><i class="fas fa-arrow-left" style="margin-right:.4rem;font-size:.7rem"></i> Back to Site</a>
+    </div>
+    <div class="nav-actions">
+      <button class="theme-toggle" id="themeToggle"><i class="fas fa-sun"></i></button>
+    </div>
+  </div>
+</nav>
+
+<div class="admin-wrap">
+
+  <div class="admin-header">
+    <div>
+      <div style="font-size:.62rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.5rem">Frontend Analytics</div>
+      <div class="admin-title">Visitor & Lead <span>Dashboard</span></div>
+    </div>
+    <div class="admin-actions">
+      <button class="btn btn-outline" id="refreshBtn"><i class="fas fa-rotate-right"></i> Refresh</button>
+      <button class="btn btn-ghost" id="exportBtn"><i class="fas fa-download"></i> Export CSV</button>
+      <button class="btn btn-outline" id="clearBtn" style="border-color:rgba(255,80,80,.3);color:#ff6060"><i class="fas fa-trash"></i> Clear</button>
+    </div>
+  </div>
+
+  <div class="note">
+    <i class="fas fa-info-circle" style="color:var(--gold);margin-right:.4rem"></i>
+    All data is stored in <strong>localStorage</strong> on this device. This is a frontend-only simulation. No data is sent to any server.
+    Data persists across visits on the same browser only.
+  </div>
+
+  <div class="stats-cards">
+    <div class="stat-card">
+      <div class="stat-card-num" id="stat-visitors"></div>
+      <div class="stat-card-label">Total Visitors</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" id="stat-leads"></div>
+      <div class="stat-card-label">Leads Captured</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" id="stat-mobile"></div>
+      <div class="stat-card-label">Mobile Devices</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-card-num" id="stat-wa"></div>
+      <div class="stat-card-label">WhatsApp Clicks</div>
+    </div>
+  </div>
+
+  <div class="conv-bar">
+    <div>
+      <div class="conv-label">Conversion Rate</div>
+      <div class="conv-value" id="conv-rate"></div>
+    </div>
+    <div style="font-size:.8rem;color:var(--text-dim);max-width:360px;line-height:1.6">
+      Leads  Visitors. A visitor becomes a lead when they submit the phone number form.
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Visitor ID</th>
+          <th>Device</th>
+          <th>Location</th>
+          <th>First Visit</th>
+          <th>CTA Actions</th>
+          <th>Lead?</th>
+          <th>Phone / Name</th>
+        </tr>
+      </thead>
+      <tbody id="visitorTable">
+        <tr><td colspan="7" style="text-align:center;padding:2rem;color:var(--text-dim)">Loading</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script>
+  // Minimal theme init before admin.js loads
+  const t = localStorage.getItem('rs_theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', t);
+  document.getElementById('themeToggle')?.addEventListener('click', () => {
+    const cur = document.documentElement.getAttribute('data-theme');
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('rs_theme', next);
+    const i = document.querySelector('#themeToggle i');
+    if (i) i.className = next === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+  });
+</script>
+<script src="js/admin.js"></script>
+</body>
+</html>
